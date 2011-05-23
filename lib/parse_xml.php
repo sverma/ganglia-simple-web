@@ -14,7 +14,7 @@ class gmetad_conf  {
 } 
 
 /**
- * @clas parse_xml 
+ * @class parse_xml 
  * 
  * @uses gmetad_conf
  * @package 

@@ -1,7 +1,5 @@
 <?php 
 include ("ganglia_config.php") ; 
-class RRD_rpn { 
-}
 class RRD_data { 
     protected $def = array () ; 
     //protected $vdef = new RRD_rpn; 
