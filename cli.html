@@ -1,0 +1,28 @@
+<link href="http://www.s3maphor3.org/tagdragon/css/reset-min.css" rel="stylesheet" type="text/css" /> 
+<link href="http://www.s3maphor3.org/tagdragon/css/main.css" rel="stylesheet" type="text/css" /> 
+<script> 
+$(document).ready(function () { 
+    $('#tags').keypress(function(event) {
+        if ( event.which == 13 ) { 
+                var val = $(this).val() ; 
+                var request = "query=" + val; 
+                $('#result').html('<h1> fetching result </h1>') ;
+                $.post( "cli.php" , request , function(data) { 
+                    process(data) ; 
+                } ); 
+        }
+    }); 
+    function process ( data ) { 
+        $('#result').html(data) ; 
+    } 
+}) ; 
+</script>
+<center>
+<h1> the ganglia cli </h1>
+<div id="tagbox" class="tagbox">
+   <input type="text" value="" id="tags" />
+</div>
+<hr><br>
+<div id="result" > 
+</div>
+</center>

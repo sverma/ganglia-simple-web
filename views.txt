@@ -1,0 +1,11 @@
+0:profiles_memory_graph:
+0:profiles_memory_graph:graph (list servers bll-us1) (list metrics memory_stats)
+1:profiles_memory_graphs:graph (list servers bll-us1) (list metrics memory_stats)
+2:mss servers Iostat:graph (list servers mss-us1\d) (list metrics IOstats.) day STACK medium nosplit
+3:mss servers memory:graph (list servers mss-us1\d) (list metrics memory_stats)
+4:mss servers memory2:graph (list servers mss-us1\d) (list metrics memory_stats) 
+5:cpanel-synsent:graph (list servers cp-\d) (list metrics synsent)
+6:bigrock_test:list servers bigrock-in.*.myorderbox.com) (find metrics servers="bigrock-in.*.myorderbox.com"
+7:chat tcp_established:list servers chat) (list metrics established
+8:chat tcp established:graph (list servers chat) (list metrics established)
+9:view_name_test:graph (list servers mss-us1\d) (list metrics IOstats.) day LINE1 medium nosplit
