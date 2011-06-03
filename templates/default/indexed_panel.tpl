@@ -16,7 +16,7 @@
 <!-- START BLOCK : index -->
 <td style="float: left;">
 <p style="text-align: center;"> {metric} </p>
-<img src="http://metrics.directi.com/graphs.php?metrics={metric}&servers={servers}&cluster={cluster}{options}" alt={metric} /> </li>
+<img src="/graphs.php?metrics={metric}&servers={servers}&cluster={cluster}{options}" alt={metric} /> </li>
 </td>
 <!-- END BLOCK : index -->
 </tr>
