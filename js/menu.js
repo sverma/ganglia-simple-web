@@ -1,5 +1,5 @@
 $(document).ready(function() { 
-    $.getJSON('http://metrics.directi.com/api/webservice.php?list=clusters' , function(data) {  
+    $.getJSON('/api/webservice.php?list=clusters' , function(data) {  
         var items = [] ;
         items.push('<option value="' + "All" + '">' + "All" + '</option>' ) ;
         $.each(data, function(key, val) { 
