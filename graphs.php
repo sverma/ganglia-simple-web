@@ -6,14 +6,10 @@ include_once ( "lib/rrdgraph_data.php" ) ;
 $servers  = array() ;
 if ( isset( $_GET["servers"] )  ) {
     $servers = explode ( ',' , $_GET["servers"] ) ;
-} else { 
-    $servers = array ( "outbound-us1.mailhostbox.com" ) ; 
 }
 $metrics = array() ; 
 if ( isset( $_GET["metrics"] ) ) {
     $metrics = explode ( ',' , $_GET["metrics"] ) ;
-} else { //error
-    $metrics = array( "cpu_user" ) ; 
 }
 $cluster = "" ; 
 if  ( isset( $_GET["cluster"] ) )  { 
