@@ -15,9 +15,9 @@ $(document).ready(function() {
         });
         var url = "" ; 
         if ( str == "All" )  { 
-            url = 'http://metrics.directi.com/api/webservice.php?list=servers' ;
+            url = '/api/webservice.php?list=servers' ;
         } else { 
-            url = 'http://metrics.directi.com/api/webservice.php?list=servers&clusters=' + str ;
+            url = '/api/webservice.php?list=servers&clusters=' + str ;
         }
         $.getJSON( url , function(data) {
             var items = [] ;
@@ -32,9 +32,9 @@ $(document).ready(function() {
         });
         var url = "" ; 
         if ( str == "All" )  { 
-            url = 'http://metrics.directi.com/api/webservice.php?list=metrics_grp' ;
+            url = '/api/webservice.php?list=metrics_grp' ;
         } else { 
-            url = 'http://metrics.directi.com/api/webservice.php?list=metrics_grp&clusters=' + str ;
+            url = '/api/webservice.php?list=metrics_grp&clusters=' + str ;
         }
 
         $.getJSON( url , function(data) {
@@ -52,9 +52,9 @@ $(document).ready(function() {
         }); 
         var url = "" ; 
         if ( str == "All" )  { 
-            url = 'http://metrics.directi.com/api/webservice.php?list=metrics' ;
+            url = '/api/webservice.php?list=metrics' ;
         } else { 
-            url = 'http://metrics.directi.com/api/webservice.php?list=metrics&clusters=' + str ;
+            url = '/api/webservice.php?list=metrics&clusters=' + str ;
         }
 
         $.getJSON( url , function(data) {
@@ -76,9 +76,9 @@ $(document).ready(function() {
         });
         var url = "" ; 
         if ( str == "All" )  { 
-            url = 'http://metrics.directi.com/api/webservice.php?list=metrics' ;
+            url = '/api/webservice.php?list=metrics' ;
         } else { 
-            url = 'http://metrics.directi.com/api/webservice.php?list=metrics&metrics_grp=' + str ;
+            url = '/api/webservice.php?list=metrics&metrics_grp=' + str ;
         }
         $.getJSON( url , function(data) {
             var items = [] ;
