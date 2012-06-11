@@ -1,5 +1,5 @@
 $(document).ready(function() { 
-    $.getJSON('/api/webservice.php?list=clusters' , function(data) {  
+    $.getJSON('api/webservice.php?list=clusters' , function(data) {  
         var items = [] ;
         items.push('<option value="' + "All" + '">' + "All" + '</option>' ) ;
         $.each(data, function(key, val) { 
@@ -15,9 +15,9 @@ $(document).ready(function() {
         });
         var url = "" ; 
         if ( str == "All" )  { 
-            url = '/api/webservice.php?list=servers' ;
+            url = 'api/webservice.php?list=servers' ;
         } else { 
-            url = '/api/webservice.php?list=servers&clusters=' + str ;
+            url = 'api/webservice.php?list=servers&clusters=' + str ;
         }
         $.getJSON( url , function(data) {
             var items = [] ;
@@ -32,9 +32,9 @@ $(document).ready(function() {
         });
         var url = "" ; 
         if ( str == "All" )  { 
-            url = '/api/webservice.php?list=metrics_grp' ;
+            url = 'api/webservice.php?list=metrics_grp' ;
         } else { 
-            url = '/api/webservice.php?list=metrics_grp&clusters=' + str ;
+            url = 'api/webservice.php?list=metrics_grp&clusters=' + str ;
         }
 
         $.getJSON( url , function(data) {
@@ -52,9 +52,9 @@ $(document).ready(function() {
         }); 
         var url = "" ; 
         if ( str == "All" )  { 
-            url = '/api/webservice.php?list=metrics' ;
+            url = 'api/webservice.php?list=metrics' ;
         } else { 
-            url = '/api/webservice.php?list=metrics&clusters=' + str ;
+            url = 'api/webservice.php?list=metrics&clusters=' + str ;
         }
 
         $.getJSON( url , function(data) {
@@ -76,9 +76,9 @@ $(document).ready(function() {
         });
         var url = "" ; 
         if ( str == "All" )  { 
-            url = '/api/webservice.php?list=metrics' ;
+            url = 'api/webservice.php?list=metrics' ;
         } else { 
-            url = '/api/webservice.php?list=metrics&metrics_grp=' + str ;
+            url = 'api/webservice.php?list=metrics&metrics_grp=' + str ;
         }
         $.getJSON( url , function(data) {
             var items = [] ;

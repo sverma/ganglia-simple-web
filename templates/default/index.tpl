@@ -70,7 +70,7 @@ float: center;
         <li><a href="cli.html"><span> (New) Ganglia CLI </span></a></li>
     </ul>
     <div id="fragment-1">
-    <form id="graphit" name="input" action="../create_graph_panel.php" method="get">
+    <form id="graphit" name="input" action="create_graph_panel.php" method="get">
         <table>
         <tbody>
         <tr>

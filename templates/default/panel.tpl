@@ -21,7 +21,7 @@ function toggleLayer( whichLayer )
     $("#tabs").tabs();
 <!-- START BLOCK : ajax_req -->
     $('#{group}_panel').html('{group}_panel <br> <img src="../images/spinner.gif" alt="Wait" /> Loading ....');
-    $.get("/inner_panel.php?servers={servers}&metrics_group={group_un}&metric={metric}&cluster={cluster}{options}" , function(data) { 
+    $.get("inner_panel.php?servers={servers}&metrics_group={group_un}&metric={metric}&cluster={cluster}{options}" , function(data) { 
         $('#{group}').html(data);
         $("#{group}_panel").html('"{group}" <a href="/inner_panel.php?servers={servers}&metrics_group={group_un}&metric={metric}&cluster={cluster}{options}" target="_blank"> <div style="text-align:right;"> Detach Panel  </div>') ; 
     });

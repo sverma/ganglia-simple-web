@@ -35,7 +35,7 @@ if ( ! isset( $_POST["query"] ) ) {
 }
 function generate_graph_urls () { 
     global $defaults ; 
-    $graph_url = "/graphs.php?graph_interval=" . $defaults['duration'] . "&graph_size=" . $defaults["graph_size"] . "&graph_style=" . $defaults["graph_style"] ; 
+    $graph_url = "graphs.php?graph_interval=" . $defaults['duration'] . "&graph_size=" . $defaults["graph_size"] . "&graph_style=" . $defaults["graph_style"] ; 
     $graph_metrics = return_graph_metrics() ; 
     $graph_servers = return_graph_servers() ; 
     $url_arg = "" ; 

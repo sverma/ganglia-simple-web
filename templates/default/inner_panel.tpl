@@ -12,7 +12,7 @@
 <!-- START BLOCK : metric -->
 <td style="float: left;">
 <p style="text-align: center;"> {metric} </p>
-<img src="/graphs.php?metrics={metric}&servers={servers}&cluster={cluster}{options}" alt={metric} /> </li>
+<img src="graphs.php?metrics={metric}&servers={servers}&cluster={cluster}{options}" alt={metric} /> </li>
 </td>
 <!-- END BLOCK : metric -->
 </center>
