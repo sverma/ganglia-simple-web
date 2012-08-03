@@ -1,4 +1,4 @@
-<?
+<?php
 //include ("lib/validate_session.php") ; 
 include ("./lib/get_data_curl.php") ;
 include_once( "open_lib/class.TemplatePower.inc.php" );

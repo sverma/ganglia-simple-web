@@ -1,4 +1,4 @@
-<?
+<?php
 session_start() ; // Create a new session 
 $session_valid = false ;
 

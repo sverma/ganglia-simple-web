@@ -1,4 +1,4 @@
-<?
+<?php
 /* Class that parses configuration of ganglia web interface 
    Usage :
         $config = new ganglia_config() ;
@@ -22,7 +22,7 @@ class ganglia_config {
     private $ini_array ;  
     
     public function __construct ( ) { 
-        $this->config_file_loc  = __ROOT__ . "/conf/conf.ini" ; 
+        $this->config_file_loc  = "conf/conf.ini" ; 
         $this->ini_array = array() ; 
         $this->ini_array = parse_ini_file($this->config_file_loc, true);
     } 

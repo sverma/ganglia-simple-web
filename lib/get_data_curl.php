@@ -1,4 +1,4 @@
-<?
+<?php
 class get_data_curl { 
     protected $url ; 
     private $timeout ; 

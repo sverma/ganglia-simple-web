@@ -1,4 +1,4 @@
-<?
+<?php
 ini_set( 'display_errors' , 'On' ) ; 
 include("../lib/get_data_curl.php") ; 
 include("../lib/update_user.php") ; 

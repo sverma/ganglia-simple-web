@@ -1,4 +1,4 @@
-<?
+<?php
 include_once( "open_lib/class.TemplatePower.inc.php" );
 include ("lib/parse_xml.php") ;
 $xml_ob = new parse_xml() ;

@@ -1,4 +1,4 @@
-<? 
+<?php
 //Main index page , generated via index.tpl . 
 
 include_once( "open_lib/class.TemplatePower.inc.php" );
