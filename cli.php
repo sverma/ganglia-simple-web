@@ -343,7 +343,7 @@ function help_command() {
         <h3> Examples : 
         <ol> Listing all servers 
         <li>  list servers </li> </ol>
-        <li> <a href="http://c/display/duSysAd/Ganglia+CLI">  LINK HERE FOR CR HELP PAGE  </a> </li>
+        <li> <a href="https://github.com/sverma/ganglia-simple-web">  LINK HERE FOR HELP PAGE <TODO> </a> </li>
         </div>
 EOF;
     echo "$help_text"; 
