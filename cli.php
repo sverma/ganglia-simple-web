@@ -344,6 +344,7 @@ function help_command() {
         <ol> Listing all servers 
         <li>  list servers </li> </ol>
         <li> <a href="https://github.com/sverma/ganglia-simple-web">  LINK HERE FOR HELP PAGE <TODO> </a> </li>
+        <li> graph <[server_regex]>([server modifiers]) <[metric_regex]>[(metric modifiers)] [duration] [type] [style] [size] </li>
         </div>
 EOF;
     echo "$help_text"; 
