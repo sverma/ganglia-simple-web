@@ -1,132 +1,44 @@
-<?php 
-include ("../lib/restutils.php") ;
-include ("../lib/parse_xml.php") ; 
-$data = RestUtils::processRequest();  
-$ganglia = new parse_xml () ; 
-$ganglia->parse() ; 
-switch ( $data->getMethod()) { 
-    case 'get': 
-        $request_var = $data->getRequestvars() ; 
-        break ; 
-}
-$LIST_ALL = "" ; 
-if ( ! array_key_exists ( "list" , $request_var ) )  { 
-    RestUtils::sendResponse("501" ) ;
-} else { 
-    if ( ( count ( array_keys ( $request_var ) ) == 1  ) || ( ( count ( array_keys ( $request_var ) ) == 2  ) && ( array_key_exists("method", $request_var ) ) ) ) { // It means user asked without a filter creteria 
-        $LIST_ALL = true ; 
-    }
-}
-
-switch ( $request_var["list"] ) { 
-    case 'clusters' : 
-        if ( $LIST_ALL == true ) { 
-            $result = $ganglia->get_all_clusters() ; 
-            $data->send_response(200,$result) ;
-            break; 
-        }
-        if ( ! array_key_exists ( "grid" , $request_var ) )  {
-            RestUtils::sendResponse ( "400" , "Should enter a grid to get clusters" ) ; 
-        }else { 
-            $result = $ganglia->get_clusters_from_grid($request_var["grid"]) ; 
-            $data->send_response($result) ; 
-        }
+<?php
+require_once dirname(__DIR__) . '/lib/bootstrap.php';
+$data = metadata();
+$list = choice('list', ['clusters','servers','metrics','metrics_grp'], 'clusters');
+$result = null;
+switch ($list) {
+    case 'clusters':
+        if (isset($_GET['grid'])) {
+            if (!in_array($_GET['grid'], $data->get_grid_name(), true)) fail_request('Unknown grid.');
+            $result = $data->get_clusters_from_grid($_GET['grid']);
+        } else $result = $data->get_all_clusters();
         break;
     case 'servers':
-        if ( $LIST_ALL == true ) {
-            $result = $ganglia->get_all_servers() ;
-            $return_ob = array() ; 
-            $return_ob["All"] = $result ; 
-            $data->send_response(200,$return_ob) ;
-            break;
-        }
-         
-        if ( array_key_exists( "clusters" , $request_var ) ) {  
-            $result = $ganglia->get_servers_from_clusters($request_var["clusters"]) ;
-            if ( $result == -1 ) { 
-                $result = array() ; 
-                $result["error"] = $ganglia->getParseErr() ; 
-                $data->send_response(501, $result) ; 
-                break;
-            }
-            $data->send_response(200,$result) ;
-        }else if ( array_key_exists( "metrics" , $request_var  ) ) { 
-            $result = $ganglia->get_servers_from_metrics($request_var["metrics"]) ;
-            if ( $result == -1 ) {
-                $result = array() ;
-                $result["error"] = $ganglia->getParseErr() ;
-                $data->send_response(501, $result) ; 
-                break;
-            }
-            $data->send_response(200,$result) ; 
-        }else { 
-            $result["error"] = "List of servers asked but without specifying the right creteria" ; 
-            $data->send_response(501, $result) ;
-            break ; 
-        }
-        break ; 
-    case 'metrics': 
-        if ( $LIST_ALL ) {
-            $result = $ganglia->get_all_metrics() ;
-            $return_ob = array() ; 
-            $return_ob["All"] = $result ; 
-            $data->send_response(200,$return_ob) ;
-            break;
-        }
-        if ( array_key_exists( "servers" , $request_var ) ) {
-            $result = $ganglia->get_metrics_from_servers($request_var["servers"] ) ; 
-            if ( $result == -1 ) {
-                $result = array() ;
-                $result["error"] = $ganglia->getParseErr() ;
-                $data->send_response(501, $result) ;
-                break;
-            }
-            $data->send_response(200,$result) ;
-        }else if ( array_key_exists( "metrics_grp" , $request_var ) ) { 
-            $result = $ganglia->get_metrics_from_groups($request_var["metrics_grp"] ) ;
-            if ( $result == -1 ) {
-                $result = array() ;
-                $result["error"] = $ganglia->getParseErr() ;
-                $data->send_response(501, $result) ;
-                break;
-            }
-            $data->send_response(200,$result) ;
-            break;
-        }else if ( array_key_exists( "clusters" , $request_var ) ) {
-            $result = $ganglia->get_metrics_from_clusters($request_var["clusters"]) ;
-            if ( $result == -1 ) {
-                $result = array() ;
-                $result["error"] = $ganglia->getParseErr() ;
-                $data->send_response(501, $result) ;
-                break;
-            }
-            $data->send_response(200,$result) ; 
-        } else { 
-            $result["error"] = "List of metricss asked but without specifying the right creteria" ;
-            $data->send_response(501, $result) ;
-            break ;
-        }
-    case 'metrics_grp': 
-        if ( $LIST_ALL ) { 
-            $result = $ganglia->get_all_metrics_group() ;
-            $return_ob = array() ; 
-            $return_ob["All"] = $result ; 
-            $data->send_response(200,$return_ob) ;
-            break; 
-        }else if ( array_key_exists( "clusters" , $request_var ) ) {
-            $result = $ganglia->get_metrics_group_from_clusters($request_var["clusters"]) ;
-            if ( $result == -1 ) {
-                $result = array() ;
-                $result["error"] = $ganglia->getParseErr() ;
-                $data->send_response(501, $result) ;
-                break;
-            }
-            $data->send_response(200,$result) ; 
-        } else { 
-            $result["error"] = "List of metricss asked but without specifying the right creteria" ; 
-            $data->send_response(501, $result) ;
-            break ;
-        }
+        if (isset($_GET['clusters'])) $result = $data->get_servers_from_clusters(selected_values('clusters', $data->get_all_clusters()));
+        elseif (isset($_GET['metrics'])) $result = $data->get_servers_from_metrics(selected_values('metrics', $data->get_all_metrics()));
+        else $result = ['All'=>$data->get_all_servers()];
+        break;
+    case 'metrics':
+        if (isset($_GET['servers'])) $result = $data->get_metrics_from_servers(selected_values('servers', $data->get_all_servers()));
+        elseif (isset($_GET['metrics_grp'])) $result = $data->get_metrics_from_groups(selected_values('metrics_grp', $data->get_all_metrics_group()));
+        elseif (isset($_GET['clusters'])) $result = $data->get_metrics_from_clusters(selected_values('clusters', $data->get_all_clusters()));
+        else $result = ['All'=>$data->get_all_metrics()];
+        break;
+    case 'metrics_grp':
+        if (isset($_GET['clusters'])) $result = $data->get_metrics_group_from_clusters(selected_values('clusters', $data->get_all_clusters()));
+        else $result = ['All'=>$data->get_all_metrics_group()];
+        break;
 }
-    
-?>
+if (choice('method', ['json','xml'], 'json') === 'xml') {
+    $writer = new XMLWriter();
+    $writer->openMemory(); $writer->startDocument('1.0','UTF-8'); $writer->startElement('response');
+    $encode = function ($items) use (&$encode, $writer): void {
+        foreach ($items as $key => $value) {
+            $writer->startElement('item'); $writer->writeAttribute('key', (string)$key);
+            if (is_array($value)) $encode($value); else $writer->text((string)$value);
+            $writer->endElement();
+        }
+    };
+    $encode($result); $writer->endElement(); $writer->endDocument();
+    header('Content-Type: application/xml; charset=utf-8'); echo $writer->outputMemory();
+} else {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($result, JSON_THROW_ON_ERROR);
+}

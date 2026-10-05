@@ -1,0 +1,15 @@
+<?php
+// Copy to conf/local.php, or set GANGLIA_WEB_CONFIG to a PHP file outside the web root.
+// Do not commit credentials. Authentication belongs in your web server.
+return [
+    'site_name' => 'Production monitoring',
+    'timezone' => 'UTC',
+    'public_origin' => 'https://monitoring.example.org',
+    'default_cluster' => 'Production',
+    'application_cluster' => 'Production',
+    'application_server' => 'web-01',
+    'classic_url' => '/ganglia/',
+    // Optional: replace the example catalog and section layout with your own.
+    // 'application_catalog' => '/etc/ganglia-simple-web/application-metrics.json',
+    // 'application_sections' => ['Service health' => ['app_up', 'app_metrics_up']],
+];
