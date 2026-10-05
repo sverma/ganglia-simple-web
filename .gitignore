@@ -1,0 +1,8 @@
+/conf/local.php
+/test-results/
+/build/
+/node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+._*

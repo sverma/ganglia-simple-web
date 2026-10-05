@@ -1,0 +1,464 @@
+[
+  {
+    "name": "app_up",
+    "title": "Application HTTP availability",
+    "units": "boolean",
+    "group": "application_health",
+    "description": "1 when the local application health check succeeds; 0 when it fails."
+  },
+  {
+    "name": "app_metrics_up",
+    "title": "Private metrics availability",
+    "units": "boolean",
+    "group": "application_health",
+    "description": "1 when the private socket returns a valid fresh snapshot; 0 otherwise."
+  },
+  {
+    "name": "app_collector_up",
+    "title": "Application collector heartbeat",
+    "units": "boolean",
+    "group": "application_health",
+    "description": "1 while the collector is publishing; expires after 120 seconds if the collector stops."
+  },
+  {
+    "name": "app_database_up",
+    "title": "Database aggregate query health",
+    "units": "boolean",
+    "group": "application_health",
+    "description": "1 when aggregate queries succeed; 0 on failure. Activity totals are omitted on query failure."
+  },
+  {
+    "name": "app_snapshot_age_seconds",
+    "title": "Application snapshot age",
+    "units": "seconds",
+    "group": "application_health",
+    "description": "Age of the successfully retrieved application snapshot. Missing when the snapshot is unavailable."
+  },
+  {
+    "name": "app_http_requests_per_min",
+    "title": "Completed requests / minute",
+    "units": "requests/min",
+    "group": "application_http",
+    "description": "Count in the rolling 60-second window. Health checks and private metrics requests are excluded. Only requests reaching Node.js are counted."
+  },
+  {
+    "name": "app_http_2xx_per_min",
+    "title": "Successful HTTP responses / minute",
+    "units": "requests/min",
+    "group": "application_http",
+    "description": "Count in the rolling 60-second window. Health checks and private metrics requests are excluded. Only requests reaching Node.js are counted."
+  },
+  {
+    "name": "app_http_3xx_per_min",
+    "title": "Redirect responses / minute",
+    "units": "requests/min",
+    "group": "application_http",
+    "description": "Count in the rolling 60-second window. Health checks and private metrics requests are excluded. Only requests reaching Node.js are counted."
+  },
+  {
+    "name": "app_http_4xx_per_min",
+    "title": "Client error responses / minute",
+    "units": "requests/min",
+    "group": "application_http",
+    "description": "Count in the rolling 60-second window. Health checks and private metrics requests are excluded. Only requests reaching Node.js are counted."
+  },
+  {
+    "name": "app_http_5xx_per_min",
+    "title": "Server error responses / minute",
+    "units": "requests/min",
+    "group": "application_http",
+    "description": "Count in the rolling 60-second window. Health checks and private metrics requests are excluded. Only requests reaching Node.js are counted."
+  },
+  {
+    "name": "app_http_aborted_per_min",
+    "title": "Aborted HTTP responses / minute",
+    "units": "requests/min",
+    "group": "application_http",
+    "description": "Count in the rolling 60-second window. Health checks and private metrics requests are excluded. Only requests reaching Node.js are counted."
+  },
+  {
+    "name": "app_http_inflight",
+    "title": "In-flight HTTP requests",
+    "units": "requests",
+    "group": "application_http",
+    "description": "Current requests being handled by Node.js; excludes health and private monitoring."
+  },
+  {
+    "name": "app_http_response_avg_ms",
+    "title": "Mean response time (60s)",
+    "units": "ms",
+    "group": "application_http",
+    "description": "Mean time from Node.js handler entry until response finish, over completed requests in the rolling 60-second window. Zero with no samples."
+  },
+  {
+    "name": "app_http_response_p95_ms",
+    "title": "P95 response time (60s)",
+    "units": "ms",
+    "group": "application_http",
+    "description": "95th percentile of request duration over the rolling 60-second window, computed before exporting using a bounded histogram with two significant digits (about 1% precision). Zero with no samples. Long-range RRD consolidation averages these window percentiles."
+  },
+  {
+    "name": "app_http_5xx_percent",
+    "title": "Server error percentage (60s)",
+    "units": "percent",
+    "group": "application_http",
+    "description": "Completed HTTP 5xx responses divided by all completed responses over the rolling 60-second window. Zero with no requests."
+  },
+  {
+    "name": "app_login_failures_per_min",
+    "title": "Failed sign-in requests / minute",
+    "units": "requests/min",
+    "group": "application_http",
+    "description": "Login and PIN-migration requests returning HTTP 4xx/5xx, including validation failures and rate limits; rolling 60 seconds."
+  },
+  {
+    "name": "app_route_auth_per_min",
+    "title": "Auth requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed auth route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_route_profiles_per_min",
+    "title": "Profiles requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed profiles route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_route_connections_per_min",
+    "title": "Connections requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed connections route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_route_account_per_min",
+    "title": "Account requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed account route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_route_admin_per_min",
+    "title": "Admin requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed admin route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_route_events_per_min",
+    "title": "Events requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed events route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_route_media_per_min",
+    "title": "Media requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed media route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_route_assets_per_min",
+    "title": "Assets requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed assets route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_route_other_per_min",
+    "title": "Other requests / minute",
+    "units": "requests/min",
+    "group": "application_routes",
+    "description": "Completed requests in the fixed other route category over the rolling 60-second window. Dynamic IDs and query strings are never exported."
+  },
+  {
+    "name": "app_page_welcome_per_min",
+    "title": "Welcome page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_pin_setup_per_min",
+    "title": "Pin Setup page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_name_per_min",
+    "title": "Name page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_contact_per_min",
+    "title": "Contact page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_discover_per_min",
+    "title": "Discover page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_profile_per_min",
+    "title": "Profile page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_introduce_per_min",
+    "title": "Introduce page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_sent_per_min",
+    "title": "Sent page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_connections_per_min",
+    "title": "Connections page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_account_per_min",
+    "title": "Account page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_admin_per_min",
+    "title": "Admin page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_privacy_per_min",
+    "title": "Privacy page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_page_guidelines_per_min",
+    "title": "Guidelines page views / minute",
+    "units": "views/min",
+    "group": "application_pages",
+    "description": "Accepted browser page-open events over the rolling 60-second window. Counts events, not unique people; client events may be missing or duplicated."
+  },
+  {
+    "name": "app_event_registrations_per_min",
+    "title": "New accounts / minute",
+    "units": "events/min",
+    "group": "application_activity",
+    "description": "Successful application events over the rolling 60-second window. Aggregate counts only."
+  },
+  {
+    "name": "app_event_logins_per_min",
+    "title": "Successful sign-ins / minute",
+    "units": "events/min",
+    "group": "application_activity",
+    "description": "Successful application events over the rolling 60-second window. Aggregate counts only."
+  },
+  {
+    "name": "app_event_introductions_per_min",
+    "title": "Introductions sent / minute",
+    "units": "events/min",
+    "group": "application_activity",
+    "description": "Successful application events over the rolling 60-second window. Aggregate counts only."
+  },
+  {
+    "name": "app_event_messages_per_min",
+    "title": "Messages sent / minute",
+    "units": "events/min",
+    "group": "application_activity",
+    "description": "Successful application events over the rolling 60-second window. Aggregate counts only."
+  },
+  {
+    "name": "app_event_profile_views_per_min",
+    "title": "Profile opens / minute",
+    "units": "events/min",
+    "group": "application_activity",
+    "description": "Successful application events over the rolling 60-second window. Aggregate counts only."
+  },
+  {
+    "name": "app_event_accepted_per_min",
+    "title": "Introductions accepted / minute",
+    "units": "events/min",
+    "group": "application_activity",
+    "description": "Successful application events over the rolling 60-second window. Aggregate counts only."
+  },
+  {
+    "name": "app_event_declined_per_min",
+    "title": "Introductions declined / minute",
+    "units": "events/min",
+    "group": "application_activity",
+    "description": "Successful application events over the rolling 60-second window. Aggregate counts only."
+  },
+  {
+    "name": "app_event_withdrawn_per_min",
+    "title": "Introductions withdrawn / minute",
+    "units": "events/min",
+    "group": "application_activity",
+    "description": "Successful application events over the rolling 60-second window. Aggregate counts only."
+  },
+  {
+    "name": "app_process_rss_bytes",
+    "title": "Node.js resident memory",
+    "units": "bytes",
+    "group": "application_runtime",
+    "description": "Resident memory of the application process."
+  },
+  {
+    "name": "app_process_heap_used_bytes",
+    "title": "Node.js used heap",
+    "units": "bytes",
+    "group": "application_runtime",
+    "description": "Used JavaScript heap of the application process."
+  },
+  {
+    "name": "app_process_heap_total_bytes",
+    "title": "Node.js total heap",
+    "units": "bytes",
+    "group": "application_runtime",
+    "description": "Allocated JavaScript heap."
+  },
+  {
+    "name": "app_process_external_bytes",
+    "title": "Node.js external memory",
+    "units": "bytes",
+    "group": "application_runtime",
+    "description": "Memory of C++ objects bound to JavaScript objects."
+  },
+  {
+    "name": "app_process_cpu_percent",
+    "title": "Node.js CPU utilization",
+    "units": "percent",
+    "group": "application_runtime",
+    "description": "Process CPU time divided by wall time over the latest 15-second sample; 100% equals one CPU core."
+  },
+  {
+    "name": "app_event_loop_utilization_percent",
+    "title": "Event-loop utilization",
+    "units": "percent",
+    "group": "application_runtime",
+    "description": "Busy event-loop time as a percentage over the latest 15-second sample."
+  },
+  {
+    "name": "app_event_loop_delay_p95_ms",
+    "title": "P95 event-loop delay",
+    "units": "ms",
+    "group": "application_runtime",
+    "description": "Node.js monitorEventLoopDelay at 20 ms resolution over the latest 15-second sample."
+  },
+  {
+    "name": "app_process_uptime_seconds",
+    "title": "Application uptime",
+    "units": "seconds",
+    "group": "application_runtime",
+    "description": "Seconds since the current Node.js process started; resets on restart."
+  },
+  {
+    "name": "app_members_total",
+    "title": "Registered member accounts",
+    "units": "members",
+    "group": "application_totals",
+    "description": "Current member accounts, excluding owners/admins. Deletion reduces this gauge."
+  },
+  {
+    "name": "app_members_suspended",
+    "title": "Suspended member accounts",
+    "units": "members",
+    "group": "application_totals",
+    "description": "Current suspended member accounts."
+  },
+  {
+    "name": "app_registrations_24h",
+    "title": "Registrations in 24 hours",
+    "units": "members",
+    "group": "application_totals",
+    "description": "Current member records created in the previous 24 hours; deleted accounts are excluded."
+  },
+  {
+    "name": "app_profiles_published",
+    "title": "Published profiles",
+    "units": "profiles",
+    "group": "application_totals",
+    "description": "Current published profile count."
+  },
+  {
+    "name": "app_introductions_total",
+    "title": "Total introductions",
+    "units": "introductions",
+    "group": "application_totals",
+    "description": "Current introduction records; deletion may reduce this gauge."
+  },
+  {
+    "name": "app_introductions_pending",
+    "title": "Pending introductions",
+    "units": "introductions",
+    "group": "application_totals",
+    "description": "Current pending introduction count."
+  },
+  {
+    "name": "app_connections_accepted",
+    "title": "Accepted connections",
+    "units": "connections",
+    "group": "application_totals",
+    "description": "Current accepted connection count."
+  },
+  {
+    "name": "app_introductions_24h",
+    "title": "Introductions in 24 hours",
+    "units": "introductions",
+    "group": "application_totals",
+    "description": "Current introductions created in the previous 24 hours."
+  },
+  {
+    "name": "app_connections_accepted_24h",
+    "title": "Connections accepted in 24 hours",
+    "units": "connections",
+    "group": "application_totals",
+    "description": "Current accepted connections updated in the previous 24 hours."
+  },
+  {
+    "name": "app_messages_24h",
+    "title": "Messages in 24 hours",
+    "units": "messages",
+    "group": "application_totals",
+    "description": "Current message records created in the previous 24 hours; message content is not read."
+  },
+  {
+    "name": "app_visits_24h",
+    "title": "Visits started in 24 hours",
+    "units": "visits",
+    "group": "application_totals",
+    "description": "Visit records started in the previous 24 hours; not unique users."
+  },
+  {
+    "name": "app_authenticated_sessions",
+    "title": "Unexpired signed-in sessions",
+    "units": "sessions",
+    "group": "application_totals",
+    "description": "Unexpired authenticated sessions. This is not an online-user count."
+  }
+]

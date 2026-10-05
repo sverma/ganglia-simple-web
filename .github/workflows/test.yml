@@ -1,0 +1,28 @@
+name: PHP and browser checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php: ['8.1', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: simplexml, xmlwriter
+          coverage: none
+      - run: sudo apt-get update && sudo apt-get install -y rrdtool
+      - run: find . -name '*.php' -exec php -l {} \;
+      - run: python3 tests/integration.py
+      - uses: actions/setup-node@v4
+        if: matrix.php == '8.3'
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright && npx playwright install --with-deps chromium
+        if: matrix.php == '8.3'
+      - run: python3 tests/integration.py --browser
+        if: matrix.php == '8.3'

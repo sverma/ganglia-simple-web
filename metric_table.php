@@ -1,38 +1,10 @@
 <?php
-include_once( "open_lib/class.TemplatePower.inc.php" );
-include ("lib/parse_xml.php") ;
-$xml_ob = new parse_xml() ;
-$xml_ob->parse() ;
-$metric_groups = $xml_ob->get_all_metrics_group() ; 
-
-$result  = $xml_ob->get_metrics_from_groups($metric_groups); 
-$tpl = new TemplatePower("templates/default/metric_drop_down.tpl") ;
-    $tpl->prepare() ;
-foreach ( $result as $group => $metrics ) { 
-    if ( ! preg_match( "/Disk-Module/" , $group ) ) { 
-        foreach ( $metrics as $metric ) { 
-            $metric_detail = $xml_ob->get_metric_details($metric) ; 
-            $tpl->newBlock("metric") ;
-            $tpl->assign("metric" , $metric ) ;
-            $tpl->assign("metric_grp" , $group ) ;
-            if ( isset ( $metric_detail["$metric"]["TITLE"] ) ) { 
-                $tpl->assign("title" , $metric_detail["$metric"]["TITLE"] ) ;
-            } else { 
-                $tpl->assign("title" , "no title" ) ; 
-            } 
-            if ( isset ( $metric_detail["$metric"]["DESC"] ) ) { 
-                $tpl->assign("desc" , $metric_detail["$metric"]["DESC"] ) ;
-            } else { 
-                $tpl->assign("desc" , "no description" ) ; 
-            } 
-            
-        }
-    }
+require_once __DIR__ . '/lib/bootstrap.php';
+header('Content-Type: text/html; charset=utf-8');
+$data = metadata();
+$groups = $data->get_metrics_from_groups($data->get_all_metrics_group());
+echo '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Metric details | Ganglia Simple Web</title><link rel="stylesheet" href="css/deployment.css"><main><header><h1>Metric details</h1><a href="./">Back to graphs</a></header>' . panel_navigation('metrics') . '<div class="table-wrap"><table><thead><tr><th>Group</th><th>Metric</th><th>Units</th><th>Description</th></tr></thead><tbody>';
+foreach ($groups as $group => $metrics) foreach ($data->get_metric_details($metrics) as $metric => $detail) {
+    echo '<tr><td>' . h($group) . '</td><td>' . h($metric) . '</td><td>' . h($detail['units'] ?? '') . '</td><td>' . h($detail['DESC'] ?? $detail['TITLE'] ?? '') . '</td></tr>';
 }
-$tpl->printToScreen() ; 
-?>
-           
-    
- 
-
-
+echo '</tbody></table></div></main></html>';

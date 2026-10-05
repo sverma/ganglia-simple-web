@@ -3,7 +3,7 @@ class gmetad_conf  {
     protected $gmetad_ip ; 
     protected $gmetad_port ; 
     public function __construct () { 
-        $this->gmetad_ip = "localhost" ;
+        $this->gmetad_ip = "127.0.0.1" ;
         $this->gmetad_port  = "8651" ; 
     }
     public function set_gmetad_conf  ($ip , $port) { 
@@ -40,8 +40,9 @@ class parse_xml extends gmetad_conf {
     private $parse_err ; 
     public $debug; 
     
-    public function __construct() {
-        parent::__construct() ; 
+    public function __construct($host = "127.0.0.1", $port = 8651) {
+        parent::__construct() ;
+        $this->set_gmetad_conf($host, $port);
         $this->errno = "" ;
         $this->errstr = "" ; 
         $this->timeout = "10" ; 
@@ -53,13 +54,25 @@ class parse_xml extends gmetad_conf {
         $this->metrics_group = array() ; 
         $this->metrics_group["non_indexed"] = array() ; 
         $this->metrics_group["indexed"] = array() ; 
-        $fp = fsockopen( "$this->gmetad_ip" , "$this->gmetad_port" , $this->errno, $this->errstr, $this->timeout);
-        $full_data = "" ; 
-        while ( !feof($fp)) { 
-            $data = fread($fp, 16384); 
-             $full_data .= $data ;
+        $fp = @fsockopen($this->gmetad_ip, (int)$this->gmetad_port, $this->errno, $this->errstr, 3);
+        if (!$fp) throw new RuntimeException('Local gmetad is unavailable.');
+        stream_set_timeout($fp, 3);
+        $full_data = '';
+        while (!feof($fp)) {
+            $chunk = fread($fp, 16384);
+            if ($chunk === false || stream_get_meta_data($fp)['timed_out']) {
+                fclose($fp);
+                throw new RuntimeException('Local gmetad read timed out.');
+            }
+            $full_data .= $chunk;
+            if (strlen($full_data) > 8 * 1024 * 1024) {
+                fclose($fp);
+                throw new RuntimeException('Local gmetad response exceeds limit.');
+            }
         }
-        $this->xml_ob =  new SimpleXMLElement ( $full_data ) ;
+        fclose($fp);
+        $this->xml_ob = new SimpleXMLElement($full_data, LIBXML_NONET);
+
     }
     public function debug_host ( $hostname ) { // debugs a host level details 
         if ( $hostname ) { 
@@ -77,7 +90,7 @@ class parse_xml extends gmetad_conf {
         foreach ( $this->xml_ob->GRID->CLUSTER as $cluster ) {
             $cluster_name = (string) $cluster["NAME"] ;
             array_push($this->grids["$grid_name"]["clusters"] , (string) $cluster["NAME"]) ;
-            if ( ! array_key_exists ( "$cluster" , $this->clusters ) )  {
+            if ( ! array_key_exists ( "$cluster_name" , $this->clusters ) )  {
                 $this->clusters["$cluster_name"] = array() ;
             }
             if ( ! array_key_exists ( "servers" , $this->clusters["$cluster_name"] ) )  {
@@ -133,11 +146,11 @@ class parse_xml extends gmetad_conf {
                             $this->metrics["$metric_name"]["units"] = (string) $metric["UNITS"] ;
                         } 
                         foreach( $metric->EXTRA_DATA->EXTRA_ELEMENT as $metric_data ) {
-                            $name = $metric_data["NAME"] ;
-                            $val = $metric_data["VAL"]  ;
+                            $name = (string)$metric_data["NAME"] ;
+                            $val = (string)$metric_data["VAL"]  ;
                             $this->metrics["$metric_name"]["$name"] = $val ;
                             if ( $name == "GROUP" ) {
-                                $metrics_group_key ; 
+
                                 if ( $indexed ) {
                                     $metrics_group_key =& $this->metrics_group["indexed"] ; 
                                 } else {

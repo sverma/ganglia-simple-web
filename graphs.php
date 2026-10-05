@@ -1,103 +1,55 @@
 <?php
-ini_set( 'display_errors' , 'On' ) ;
-#include_once ("lib/validate_session.php")  ; 
-include_once ( "lib/find_rrd_paths.php" ) ;
-include_once ( "lib/rrdgraph_data.php" ) ;
-$servers  = array() ;
-if ( isset( $_GET["servers"] )  ) {
-    $servers = explode ( ',' , $_GET["servers"] ) ;
-}
-$metrics = array() ; 
-if ( isset( $_GET["metrics"] ) ) {
-    $metrics = explode ( ',' , $_GET["metrics"] ) ;
-}
-$cluster = "" ; 
-if  ( isset( $_GET["cluster"] ) )  { 
-    $cluster = $_GET["cluster"];
-} 
-
-/* Setting up defualt graph properties , should be moved from here to conf.php */
-$graph_properties = array( 
-    "width" => 200 , 
-    "height" => 200 , 
-    "end" => "now" , 
-    "start" => -1 * 3660 , 
-    "graph_type" => "average" , 
-    "vertical-label" => "units" , 
-) ; 
-// default values 
-
-$defaults = array ( 
-    "graph_size" => array ( 
-        "small" => "400X200" , "medium" => "500X400" , "large" => "600X500" ) , 
-    "graph_interval" => array ( 
-        "hour" => 3600 , "day" => 3600*24 , "week" => 3600*24*7 , "month" => 3600*24*7*4 , "year" => 3600*24*7*4*12 ) , 
-) ; 
-// Generate options query 
-$config_ob = new ganglia_config() ;
-$config = $config_ob->all_config() ;
-$option = '';
-foreach ( $config["graph_defaults"] as $name => $value ) {
-    if ( array_key_exists($name , $defaults ) ) { 
-        if ( $name == "graph_size" ) { 
-            if ( preg_match ( "/^(\d+)X(\d+)$/" ,  $defaults[$name]["$_GET[$name]"]  , $matches ) )  { 
-                $graph_properties["width"] = $matches[1] ; 
-                $graph_properties["height"] = $matches[2] ; 
-            } 
-        } else if ( $name == "graph_interval" ) { 
-                $graph_properties["start"] = -1 * $defaults[$name][$_GET["$name"]] ; 
-        } 
-    }  else if ( isset($_GET["$name"] ) ) { 
-                $graph_properties["$name"] = $_GET["$name"];
-    } else if ( isset ($defaults[$name] ) )  { 
-                $graph_properties["$name"] = $defaults[$name]; 
-    }  
-}
-
-$title = "" ; 
-if ( ( isset($cluster) ) && ( ! preg_match ( "/all/" , $cluster ) ) )  { 
-    $title .= "<$cluster>" ; 
-} 
-
-$all = new all_metrics() ;
-if ( ! preg_match ( "/all/i"  , $cluster ) ) { 
-    $all->set_global_cluster("$cluster") ; 
-}
-foreach ( $metrics as $metric ) { 
-    $all->add_metric( $metric ) ; 
-    foreach ( $servers as $server ) { 
-        $all->add_server($server) ;
+require_once __DIR__ . '/lib/bootstrap.php';
+$options = graph_options();
+[$clusters, $servers, $metrics] = selection();
+if (!$metrics || count($servers) * count($metrics) > 16) fail_request('Choose between 1 and 16 graph series.');
+$sizes = ['small'=>[400,170], 'medium'=>[520,230], 'large'=>[760,310]];
+[$width, $height] = $sizes[$options['graph_size']];
+$ranges = ['hour'=>3600,'day'=>86400,'week'=>604800,'month'=>2592000,'year'=>31536000];
+$data = metadata();
+$details = $data->get_metric_details($metrics);
+$units = array_unique(array_map(fn($metric) => (string)($details[$metric]['units'] ?? ''), $metrics));
+$unit = count($units) === 1 ? reset($units) : 'mixed units';
+$args = [config('rrdtool'),'graph','-','--imgformat','PNG','--start','end-' . $ranges[$options['graph_interval']], '--end','now',
+    '--width',(string)$width,'--height',(string)$height,'--lower-limit','0','--slope-mode',
+    '--title',implode(', ', $metrics),'--vertical-label', $unit, '--font','DEFAULT:9',
+    '--watermark',config('site_name') . ' | ' . config('timezone')];
+$palette = ['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#0891b2','#be185d','#475569'];
+$draw = $statistics = [];
+$index = 0;
+foreach ($metrics as $metric) foreach ($servers as $server) {
+    $cluster = $data->get_cluster_from_servername($server);
+    $path = series_path($cluster, $server, $metric);
+    if (!$path) continue;
+    $id = 's' . $index;
+    $color = $palette[$index % count($palette)];
+    $label = str_replace(['\\',':'], ['\\\\','\\:'], $server . ' ' . $metric);
+    $rrd = str_replace(['\\',':'], ['\\\\','\\:'], $path);
+    $args[] = "DEF:$id=$rrd:sum:AVERAGE";
+    $style = $options['graph_style'] === 'STACK' ? 'AREA' : $options['graph_style'];
+    $draw[] = "$style:$id$color:$label\\l" . ($options['graph_style'] === 'STACK' && $index ? ':STACK' : '');
+    foreach (['last'=>'LAST','min'=>'MINIMUM','avg'=>'AVERAGE','max'=>'MAXIMUM'] as $name => $function) {
+        $args[] = "VDEF:{$id}_$name=$id,$function";
+        $statistics[] = "GPRINT:{$id}_$name:" . ucfirst($name) . '\\:%7.2lf%s' . ($name === 'max' ? '\\l' : '');
     }
-}
-$all_rrd_paths = $all->create_paths($all) ; 
-$data_obj = new RRD_graph() ;
-$data_obj->set_properties( $graph_properties ) ;
-// If we are graphing single metric multiple servers and then color scheme should be constant 
-if ( count($metrics) == 1 ) { 
-    $data_obj->constant_color = true ; 
-} 
-foreach ( $metrics as $metric ) { 
-    foreach ( $all_rrd_paths[$metric] as $path ) {
-        $data_obj->add_ds("sum", $path , "AVERAGE") ;
+    if ($options['graph_type'] !== 'average') {
+        $type = $options['graph_type'];
+        $function = ['minimum'=>'MINIMUM','maximum'=>'MAXIMUM','percentile'=>$options['percentile_val'] . ',PERCENT'][$type];
+        $args[] = "VDEF:{$id}_summary=$id,$function";
+        $draw[] = "LINE1:{$id}_summary$color:" . ucfirst($type) . ($type === 'percentile' ? ' ' . $options['percentile_val'] : '') . '\l:dashes';
     }
+    $index++;
 }
-$data_obj->create_graph() ; 
-$command_arg  = $data_obj->get_rrd_cmd_arg() ; 
-$command = 'rrdtool graph - ' . $command_arg ; 
-
-if ( ! isset($_GET["debug"]) )  { 
-    //Make sure the image is not cached
-    header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");   // Date in the past
-    header ("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
-    header ("Cache-Control: no-cache, must-revalidate");   // HTTP/1.1
-    header ("Pragma: no-cache");                     // HTTP/1.0
-    header ("Content-type: image/png");
-    passthru($command) ; 
-    //passthru("$command 1>/tmp/met.png") ; 
-} else { 
-    print_r($command) ; 
-    echo ("<HR>") ; 
-    echo ($command) ; 
-    //passthru("echo $command") ; 
-}
-?>
+if (!$index) fail_request('No numeric history for this selection.', 404);
+$args = array_merge($args, $draw, $statistics);
+// Array argv bypasses the shell entirely; every series is selected from local metadata.
+$process = proc_open($args, [0=>['pipe','r'], 1=>['pipe','w'], 2=>['pipe','w']], $pipes);
+if (!is_resource($process)) throw new RuntimeException('Could not start rrdtool.');
+fclose($pipes[0]);
+$png = stream_get_contents($pipes[1]); fclose($pipes[1]);
+$error = stream_get_contents($pipes[2]); fclose($pipes[2]);
+$status = proc_close($process);
+if ($status !== 0 || !str_starts_with($png, "\x89PNG\r\n\x1a\n")) throw new RuntimeException('rrdtool: ' . $error);
+header('Content-Type: image/png');
+header('Cache-Control: private, no-store');
+echo $png;
